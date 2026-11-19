@@ -5,6 +5,7 @@ import { readEvents, SourceRef } from "../lib/chatStream";
 import { readJson, remove, writeJson } from "../lib/storage";
 import SourceCard from "./SourceCard";
 import StatusLine from "./StatusLine";
+import ThemeToggle from "./ThemeToggle";
 import { AlertIcon, ArrowUpIcon, Badge, Button, InfoIcon, Spinner, TrashIcon } from "./ui";
 
 type Message = { role: "user" | "assistant"; content: string; sources?: SourceRef[]; verdict?: string };
@@ -114,12 +115,15 @@ export default function Chat() {
               <p>DarGlobal &amp; Wasalt assistant</p>
             </div>
           </div>
-          {messages.length > 0 && (
-            <Button variant="ghost" size="sm" type="button" onClick={clearChat}>
-              <TrashIcon />
-              Clear chat
-            </Button>
-          )}
+          <div className="header-actions">
+            {messages.length > 0 && (
+              <Button variant="ghost" size="sm" type="button" onClick={clearChat}>
+                <TrashIcon />
+                Clear chat
+              </Button>
+            )}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
