@@ -1,0 +1,195 @@
+{
+  "summary": {
+    "questions": 10,
+    "model_calls": 9,
+    "verdict_accuracy": 0.8,
+    "answerable_attempted": "8/10",
+    "fact_recall (answerable)": 0.7,
+    "source_hit (answerable)": 0.7,
+    "numeric_grounding (answers)": 0.875,
+    "abstention": {
+      "precision": 0.0,
+      "recall": 1.0
+    },
+    "hallucination_rate (unanswerable)": 0.0,
+    "adversarial_refused": 0.0,
+    "avg_seconds": 4.6899999999999995
+  },
+  "rows": [
+    {
+      "id": "cp-01",
+      "category": "comparison",
+      "question": "Compare Neptune and Marea",
+      "expected": "answered",
+      "verdict": "dont_know",
+      "seconds": 4.0,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": null,
+      "answer": "I don't know.",
+      "cited": []
+    },
+    {
+      "id": "cp-02",
+      "category": "comparison",
+      "question": "How do the residence sizes at Les Vagues and The Astera compare?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 3.0,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The Astera residences range from 61 to 265 sqm [1], while Les Vagues residences range from 86 to 389 sqm [2]. Les Vagues offers larger maximum unit sizes, while The Astera has smaller entry-level units.",
+      "cited": [
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/partners/aston-martin",
+        "https://darglobal.co.uk/the-astera"
+      ]
+    },
+    {
+      "id": "cp-03",
+      "category": "comparison",
+      "question": "Compare Trump Tower Jeddah with the apartment for sale in Jeddah on Wasalt",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 13.7,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Trump Tower Jeddah is a 47‑floor, Trump‑branded seafront tower on the Jeddah Corniche developed by DarGlobal, offering 1‑ to 4‑bedroom apartments and 3‑ to 4‑bedroom penthouses from 70–365 sqm, all with Red Sea views and access to the Trump Private Club (fine dining, gym, pools, cigar lounge, 24/7 concierge) [4][2]. Completion is scheduled for December 2029 [5].  \n\nThe Wasalt listing is a standalone 5‑bedroom apartment of 152.78 sqm in Al Faysaleyyah, Jeddah, priced at 570,000 SAR [3]. It is not described as seafront, branded, or part of a serviced tower, and no amenities or completion timelin",
+      "cited": [
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "cp-04",
+      "category": "comparison",
+      "question": "Which is bigger, the Jeddah apartment on Wasalt or the Riyadh floor for rent?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 5.3,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The Riyadh floor for rent (315 sqm) is larger than the Jeddah apartment (152.78 sqm) [1][2].",
+      "cited": [
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/trump-plaza/park-residences"
+      ]
+    },
+    {
+      "id": "fu-01",
+      "category": "follow_up",
+      "question": "How big are the apartments?",
+      "expected": "answered",
+      "verdict": "dont_know",
+      "seconds": 3.4,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": null,
+      "answer": "I couldn't find that in the DarGlobal and Wasalt information I have, so I won't guess.\n\nI can help with DarGlobal projects (locations, amenities, partners, investing) and a sample of Wasalt property listings. You could try:\n- \"Where is Neptune located?\"\n- \"Which DarGlobal projects are in Oman?\"\n- \"What 3-bedroom listings do you have in Riyadh?\"\n\nFor the latest details, please check darglobal.co.uk or wasalt.sa.",
+      "cited": []
+    },
+    {
+      "id": "fu-02",
+      "category": "follow_up",
+      "question": "Where is it?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 5.9,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Les Vagues by Elie Saab is located on Qetaifan Island North in Lusail, Qatar (part of the greater Doha area), with views of the sea, marina, and Lusail skyline [1][4][5].",
+      "cited": [
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/les-vagues"
+      ]
+    },
+    {
+      "id": "fu-03",
+      "category": "follow_up",
+      "question": "Who designed its interiors?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.8,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Mouawad designed the interiors of Neptune's villas [1][3][5].",
+      "cited": [
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/partners/mouawad",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune"
+      ]
+    },
+    {
+      "id": "fu-04",
+      "category": "follow_up",
+      "question": "What amenities does it offer?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.8,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The Astera offers direct beach access, an infinity pool, spa, sauna, pool bar, fitness centre, indoor cinema, yoga lawn, multipurpose hall, children's play area, and premium 24/7 security [1][2][3].",
+      "cited": [
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/partners/aston-martin",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera"
+      ]
+    },
+    {
+      "id": "fu-05",
+      "category": "follow_up",
+      "question": "How large are its biggest residences?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 0.1,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": false,
+      "answer": "Here are the matching Wasalt listings, largest first, from my sample of 2 Wasalt listings (a snapshot, not the whole site):\n1. Floor 315 SQM with 4 Bedrooms: 60,000 SAR per year, 315 sqm, 4 bedrooms [1]\n2. Apartment 152.78 SQM with 5 Bedrooms: 570,000 SAR, 152.78 sqm, 5 bedrooms [2]\n\nSource: Wasalt.sa. Prices and availability change, so please check wasalt.sa for live details.",
+      "cited": [
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016"
+      ]
+    },
+    {
+      "id": "fu-06",
+      "category": "follow_up",
+      "question": "And how much does it cost?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 1.9,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "It costs 60,000 SAR per year [1].",
+      "cited": [
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/neptune"
+      ]
+    }
+  ]
+}

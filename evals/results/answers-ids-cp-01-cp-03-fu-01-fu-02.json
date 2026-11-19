@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "questions": 4,
+    "model_calls": 4,
+    "verdict_accuracy": 0.25,
+    "answerable_attempted": "3/4",
+    "fact_recall (answerable)": 0.75,
+    "source_hit (answerable)": 0.75,
+    "numeric_grounding (answers)": 1.0,
+    "abstention": {
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "hallucination_rate (unanswerable)": 0.0,
+    "adversarial_refused": 0.0,
+    "avg_seconds": 16.325
+  },
+  "rows": [
+    {
+      "id": "cp-01",
+      "category": "comparison",
+      "question": "Compare Neptune and Marea",
+      "expected": "answered",
+      "verdict": "partial",
+      "seconds": 32.3,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "**Developer & Brand Partnership** - **Neptune**: Developed by DarGlobal in partnership with **Mouawad** (130+ year jewellery house), marking Mouawad's first entry into branded residential real estate [2][4]. - **Marea**: Developed by DarGlobal with **Missoni** (Italian fashion house) providing interior design across the residences [5]. **Location** - **Marea**: Within the **Finca Cortesin gated estate** in Cortesin, Costa del Sol, Spain, overlooking the Mediterranean Sea and an elite golf course with 270° panoramic views [3][5]. **Property Types & Sizes** - **Neptune**: **200 five‑bedroom vill",
+      "cited": [
+        "https://darglobal.co.uk/partners/mouawad",
+        "https://darglobal.co.uk/partners/mouawad",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/neptune"
+      ]
+    },
+    {
+      "id": "cp-03",
+      "category": "comparison",
+      "question": "Compare Trump Tower Jeddah with the apartment for sale in Jeddah on Wasalt",
+      "expected": "answered",
+      "verdict": "partial",
+      "seconds": 25.4,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Trump Tower Jeddah is a 47‑floor Trump‑branded seafront tower on the Jeddah Corniche, developed by DarGlobal with completion slated for December 2029 [3][6]. The Wasalt listing is a standalone 5‑bedroom, 152.78 sqm apartment in Al Faysaleyyah, Jeddah, priced at 570,000 SAR [2]. Trump Tower sits on the Corniche near the marina, Formula 1 circuit, and King Fahd Fountain [3][4]; the Wasalt unit’s location is not described as waterfront. Trump Tower is a new‑build luxury development; the Wasalt apartment appears to be an existing resale. No pricing for Trump Tower units is provided in the sources.",
+      "cited": [
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "fu-01",
+      "category": "follow_up",
+      "question": "How big are the apartments?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 5.2,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The apartments at Trump Tower Jeddah range from 70 to 365 square meters, with one- to four-bedroom apartments and three- and four-bedroom penthouses available [6].",
+      "cited": [
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "fu-02",
+      "category": "follow_up",
+      "question": "Where is it?",
+      "expected": "answered",
+      "verdict": "error",
+      "seconds": 2.4,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": null,
+      "answer": "Sorry, I'm having trouble answering right now. Please try again in a moment, or browse darglobal.co.uk and wasalt.sa directly.",
+      "cited": []
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "fx-alpha-1",
+    "source": "darglobal",
+    "url": "https://example.test/alpha",
+    "title": "Alpha Residences",
+    "section": "Overview",
+    "text": "Alpha Residences is a fictional beachfront development in Testville offering two bedroom apartments from 1,000,000 SAR.",
+    "scraped_at": "2026-11-18T10:00:00Z"
+  },
+  {
+    "id": "fx-beta-1",
+    "source": "wasalt",
+    "url": "https://example.test/beta",
+    "title": "Beta Villa listing",
+    "section": "Listing",
+    "text": "Villa for sale in Exampleton with five bedrooms and a private garden, 4,500,000 SAR, 450 sqm.",
+    "scraped_at": "2026-11-17T09:00:00Z",
+    "city": "Exampleton",
+    "property_type": "villa",
+    "listing_kind": "sale",
+    "price": 4500000,
+    "currency": "SAR",
+    "area_sqm": 450,
+    "bedrooms": 5
+  }
+]

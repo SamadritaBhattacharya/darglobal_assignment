@@ -1,0 +1,73 @@
+{
+  "summary": {
+    "questions": 3,
+    "model_calls": 3,
+    "verdict_accuracy": 1.0,
+    "answerable_attempted": "3/3",
+    "fact_recall (answerable)": 0.3333333333333333,
+    "source_hit (answerable)": 0.3333333333333333,
+    "numeric_grounding (answers)": 1.0,
+    "abstention": {
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "hallucination_rate (unanswerable)": 0.0,
+    "adversarial_refused": 0.0,
+    "avg_seconds": 8.0
+  },
+  "rows": [
+    {
+      "id": "cp-01",
+      "category": "comparison",
+      "question": "Compare Neptune and Marea",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 9.1,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": true,
+      "answer": "Based on the provided information, I can only tell you about Neptune. Neptune pairs Mouawad's century-old craftsmanship legacy with DarGlobal's debut development in the Saudi market [1]. There is no information about Marea in the evidence provided, so I cannot compare the two projects.",
+      "cited": [
+        "https://darglobal.co.uk/partners/mouawad"
+      ]
+    },
+    {
+      "id": "fu-01",
+      "category": "follow_up",
+      "question": "How big are the apartments?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 8.8,
+      "fact_recall": 0.0,
+      "source_hit": 0.0,
+      "grounded": true,
+      "answer": "The apartments range from 91 to 364 square meters. [3]",
+      "cited": [
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/trump-plaza/park-residences",
+        "https://darglobal.co.uk/urban-oasis-by-missoni",
+        "https://darglobal.co.uk/aida-coastal-investment-villas"
+      ]
+    },
+    {
+      "id": "fu-05",
+      "category": "follow_up",
+      "question": "How large are its biggest residences?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 6.1,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The biggest residences at Marea are 553 sqm. [2][4]",
+      "cited": [
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/partners/missoni"
+      ]
+    }
+  ]
+}

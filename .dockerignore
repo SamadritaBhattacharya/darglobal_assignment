@@ -1,0 +1,16 @@
+.venv
+.git
+.env
+.scratch
+docs
+**/__pycache__
+**/.pytest_cache
+backend/tests
+scraper
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/tests
+data/raw
+data/index
+data/export

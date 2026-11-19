@@ -1,0 +1,20 @@
+[
+  {"id": "re-alpha", "source": "darglobal", "url": "https://example.test/alpha", "title": "Alpha Residences", "section": "Overview", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Alpha Residences | Overview\nAlpha Residences is a fictional beachfront development offering affordable two bedroom apartments steps from the sea, from 1,000,000 SAR."},
+  {"id": "re-marlow", "source": "darglobal", "url": "https://example.test/marlow", "title": "Marlow Plaza", "section": "Executive Residences", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Marlow Plaza | Executive Residences\nMarlow Plaza Executive Residences is a fictional luxury high-rise in the city centre with a sky lounge and concierge."},
+  {"id": "re-villa", "source": "wasalt", "url": "https://example.test/villa", "title": "Villa listing", "section": "Listing", "scraped_at": "2026-11-17T09:00:00Z",
+   "text": "Wasalt | Villa listing | Listing\nVilla for sale in Exampleton with five bedrooms and a private garden, 4,500,000 SAR, 450 sqm.",
+   "city": "Exampleton", "property_type": "villa", "listing_kind": "sale", "price": 4500000, "currency": "SAR", "area_sqm": 450, "bedrooms": 5},
+  {"id": "re-garden", "source": "darglobal", "url": "https://example.test/garden", "title": "Garden Court", "section": "Community", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Garden Court | Community\nGarden Court townhouses sit beside parks, schools and playgrounds, a calm neighbourhood for children and families."},
+  {"id": "re-golf", "source": "darglobal", "url": "https://example.test/golf", "title": "Fairway Heights", "section": "Overview", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Fairway Heights | Overview\nFairway Heights is a golf community built around a championship eighteen hole course."},
+  {"id": "re-studio", "source": "wasalt", "url": "https://example.test/studio", "title": "Studio listing", "section": "Listing", "scraped_at": "2026-11-17T09:00:00Z",
+   "text": "Wasalt | Studio listing | Listing\nFurnished studio for rent in Testville, 3,000 SAR per month, 40 sqm.",
+   "city": "Testville", "property_type": "studio", "listing_kind": "rent", "price": 3000, "currency": "SAR", "area_sqm": 40, "bedrooms": 0},
+  {"id": "re-office", "source": "darglobal", "url": "https://example.test/office", "title": "Harbour Offices", "section": "Overview", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Harbour Offices | Overview\nHarbour Offices is a commercial tower with flexible workspaces and meeting suites for companies."},
+  {"id": "re-foreign", "source": "darglobal", "url": "https://example.test/foreign", "title": "Foreign ownership", "section": "FAQ", "scraped_at": "2026-11-18T10:00:00Z",
+   "text": "DarGlobal | Foreign ownership | FAQ\nForeign investors may buy freehold property in designated zones of Exampleton."}
+]

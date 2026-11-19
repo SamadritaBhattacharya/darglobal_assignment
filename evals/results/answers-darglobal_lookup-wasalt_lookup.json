@@ -1,0 +1,343 @@
+{
+  "summary": {
+    "questions": 17,
+    "model_calls": 17,
+    "verdict_accuracy": 0.9411764705882353,
+    "answerable_attempted": "17/17",
+    "fact_recall (answerable)": 0.7941176470588235,
+    "source_hit (answerable)": 1.0,
+    "numeric_grounding (answers)": 1.0,
+    "abstention": {
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "hallucination_rate (unanswerable)": 0.0,
+    "adversarial_refused": 0.0,
+    "avg_seconds": 4.864705882352942
+  },
+  "rows": [
+    {
+      "id": "dg-01",
+      "category": "darglobal_lookup",
+      "question": "Where is Neptune located?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 6.0,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Neptune is located within SEDRA, North Riyadh's master-planned community, in close proximity to the Expo 2030 Riyadh site [1][4].",
+      "cited": [
+        "https://darglobal.co.uk/partners/mouawad",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune"
+      ]
+    },
+    {
+      "id": "dg-02",
+      "category": "darglobal_lookup",
+      "question": "Who designed the interiors of Neptune?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.0,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Mouawad, the internationally renowned Swiss-Lebanese jewellery house, designed the interiors of each Neptune villa [1][5].",
+      "cited": [
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/partners/mouawad",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/neptune"
+      ]
+    },
+    {
+      "id": "dg-03",
+      "category": "darglobal_lookup",
+      "question": "How many floors does Trump Tower Jeddah have?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 2.6,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Trump Tower Jeddah has 47 floors [1][3][4].",
+      "cited": [
+        "https://darglobal.co.uk/partners/the-trump-organization",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "dg-04",
+      "category": "darglobal_lookup",
+      "question": "What range of apartment sizes does Trump Tower Jeddah offer?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.3,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Trump Tower Jeddah offers apartments and penthouses ranging from 70 to 365 sqm [1][2].",
+      "cited": [
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "dg-05",
+      "category": "darglobal_lookup",
+      "question": "In which city is Les Vagues by Elie Saab?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 9.1,
+      "fact_recall": 0.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Les Vagues by Elie Saab is located on Qetaifan Island North in Lusail, Qatar [1].",
+      "cited": [
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/les-vagues"
+      ]
+    },
+    {
+      "id": "dg-06",
+      "category": "darglobal_lookup",
+      "question": "How big are the residences at Les Vagues?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 5.5,
+      "fact_recall": 0.5,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The residences at Les Vagues range from approximately 84 to 389 square metres, offering one-, two-, and three-bedroom units [2][3].",
+      "cited": [
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/les-vagues",
+        "https://darglobal.co.uk/partners/elie-saab",
+        "https://darglobal.co.uk/trump-plaza/park-residences"
+      ]
+    },
+    {
+      "id": "dg-07",
+      "category": "darglobal_lookup",
+      "question": "Which estate is Marea located in?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 3.3,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Marea is located within the Finca Cortesin gated estate in Cortesin, Costa Del Sol, Spain [1][3][4].",
+      "cited": [
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/partners/missoni",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea"
+      ]
+    },
+    {
+      "id": "dg-08",
+      "category": "darglobal_lookup",
+      "question": "What sizes are the residences at Marea?",
+      "expected": "answered",
+      "verdict": "partial",
+      "seconds": 6.8,
+      "fact_recall": 0.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The overview page lists the area as 147–382 sqm for 2, 3, and 4 bedroom units [3].\n\nI couldn't verify some details in that answer, so I left them out.",
+      "cited": [
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/marea",
+        "https://darglobal.co.uk/partners/missoni",
+        "https://darglobal.co.uk/marea"
+      ]
+    },
+    {
+      "id": "dg-09",
+      "category": "darglobal_lookup",
+      "question": "Where is The Astera?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 5.3,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The Astera is located on Al Marjan Island in Ras Al Khaimah, UAE, a man-made island off the coastline about 60 minutes from Dubai International Airport and approximately 5 minutes from the Wynn Resort [1][3][5].",
+      "cited": [
+        "https://darglobal.co.uk/partners/aston-martin",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera"
+      ]
+    },
+    {
+      "id": "dg-10",
+      "category": "darglobal_lookup",
+      "question": "Which car brand designed the interiors at The Astera?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 2.6,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Aston Martin designed the interiors at The Astera. [1]",
+      "cited": [
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/development-management",
+        "https://darglobal.co.uk/development-management"
+      ]
+    },
+    {
+      "id": "dg-11",
+      "category": "darglobal_lookup",
+      "question": "Where is the Da Vinci Tower by Pagani?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.2,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Da Vinci Tower is located in Downtown Dubai, directly on the Dubai Canal, with views of the Burj Khalifa and moments from Marasi Business Bay. The Dubai Mall and Fountains are about 9 minutes away, and Dubai Marina is around 20 minutes away. [1][3][4]",
+      "cited": [
+        "https://darglobal.co.uk/davinci-tower-by-pagani",
+        "https://darglobal.co.uk/davinci-tower-by-pagani",
+        "https://darglobal.co.uk/partners/pagani",
+        "https://darglobal.co.uk/partners/pagani",
+        "https://darglobal.co.uk/davinci-tower-by-pagani"
+      ]
+    },
+    {
+      "id": "dg-12",
+      "category": "darglobal_lookup",
+      "question": "What amenities does Trump Tower Jeddah have?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 7.8,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Trump Tower Jeddah offers the Trump Private Club with 24/7 concierge, meeting rooms, a cigar lounge, fine dining, a swimming pool, kids' pool, jacuzzi, gym, yoga zone, and uninterrupted Red Sea views [1][2].",
+      "cited": [
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/partners/the-trump-organization",
+        "https://darglobal.co.uk/trump-tower-jeddah",
+        "https://darglobal.co.uk/trump-tower-jeddah"
+      ]
+    },
+    {
+      "id": "dg-13",
+      "category": "darglobal_lookup",
+      "question": "What amenities does The Astera offer?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.7,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The Astera offers direct beach access, a private beach, an infinity pool with ocean views, a spa, sauna, pool bar, fitness centre, indoor cinema, yoga lawn, multipurpose hall, children's play area, premium 24/7 security, and a scenic walking track. Beach villas provide private shoreline access directly from the residence [1][2][3].",
+      "cited": [
+        "https://darglobal.co.uk/partners/aston-martin",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera",
+        "https://darglobal.co.uk/the-astera"
+      ]
+    },
+    {
+      "id": "ws-01",
+      "category": "wasalt_lookup",
+      "question": "Tell me about the apartment for sale in Al Faysaleyyah, Jeddah",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 4.7,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The apartment for sale in Al Faysaleyyah, Jeddah is listed on Wasalt.sa with 5 bedrooms, 152.78 sqm, and a price of 570,000 SAR [1].",
+      "cited": [
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/villas"
+      ]
+    },
+    {
+      "id": "ws-02",
+      "category": "wasalt_lookup",
+      "question": "How much is the 4 bedroom floor for rent in Al-Arid, Riyadh?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 3.2,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The 4-bedroom floor for rent in Al-Arid, Riyadh is listed at 60,000 SAR per year [1].",
+      "cited": [
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/neptune"
+      ]
+    },
+    {
+      "id": "ws-03",
+      "category": "wasalt_lookup",
+      "question": "How big is the apartment for sale in Al Faysaleyyah?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 2.4,
+      "fact_recall": 1.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "The apartment for sale in Al Faysaleyyah is 152.78 square meters [1].",
+      "cited": [
+        "https://wasalt.sa/en/property/sale/apartment-15278-sqm-with-5-bedrooms-5924016",
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/w-residences",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments"
+      ]
+    },
+    {
+      "id": "ws-04",
+      "category": "wasalt_lookup",
+      "question": "Do you have any rentals in Riyadh?",
+      "expected": "answered",
+      "verdict": "answered",
+      "seconds": 6.2,
+      "fact_recall": 0.0,
+      "source_hit": 1.0,
+      "grounded": true,
+      "answer": "Yes, there is a rental listing in Al‑Arid, Riyadh: a 4‑bedroom floor of 315 sqm for 60,000 SAR per year [4].",
+      "cited": [
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://darglobal.co.uk/neptune",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/apartments",
+        "https://wasalt.sa/en/property/rent/floor-315-sqm-with-4-bedrooms-5900066",
+        "https://darglobal.co.uk/projects/properties-in-saudi-arabia/villas"
+      ]
+    }
+  ]
+}

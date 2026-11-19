@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+node_modules/
+frontend/.next/
+frontend/out/
+data/raw/
+data/index/
