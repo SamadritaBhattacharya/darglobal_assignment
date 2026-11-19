@@ -83,7 +83,9 @@ def create_app_from_env() -> FastAPI:
     settings = Settings.from_env(os.environ)
     return create_app(
         settings.data_dir,
-        OpenRouterLLM(settings.openrouter_api_key, settings.models),
+        OpenRouterLLM(
+            settings.openrouter_api_key, settings.models, fallback_api_key=settings.openrouter_fallback_api_key
+        ),
         static_dir=settings.static_dir,
         index_dir=settings.index_dir,
     )

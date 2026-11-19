@@ -37,3 +37,10 @@ def test_a_data_directory_is_loaded_as_one_corpus_and_reports_the_newest_date(tm
 
     client = TestClient(create_app(corpus_path=tmp_path, llm=ScriptedLLM(reply="ok")))
     assert client.get("/api/health").json() == {"status": "ok", "data_as_of": "2026-11-18"}
+
+
+def test_reads_a_secondary_key_and_never_reprs_it():
+    s = Settings.from_env({"OPENROUTER_API_KEY": "a", "OPENROUTER_API_KEY_2": "super-secret-2"})
+    assert s.openrouter_fallback_api_key == "super-secret-2"
+    assert "super-secret-2" not in repr(s)
+    assert Settings.from_env({}).openrouter_fallback_api_key == ""

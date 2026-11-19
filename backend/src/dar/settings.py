@@ -21,6 +21,7 @@ DEFAULT_INDEX_DIR = Path(__file__).resolve().parents[3] / "data" / "index"
 @dataclass(frozen=True)
 class Settings:
     openrouter_api_key: str = field(default="", repr=False)
+    openrouter_fallback_api_key: str = field(default="", repr=False)
     models: list[str] = field(default_factory=lambda: list(DEFAULT_MODELS))
     data_dir: Path = DEFAULT_DATA_DIR
     static_dir: Path = DEFAULT_STATIC_DIR
@@ -31,6 +32,7 @@ class Settings:
         models = [m.strip() for m in env.get("OPENROUTER_MODELS", "").split(",") if m.strip()]
         return cls(
             openrouter_api_key=env.get("OPENROUTER_API_KEY", ""),
+            openrouter_fallback_api_key=env.get("OPENROUTER_API_KEY_2", ""),
             models=models or list(DEFAULT_MODELS),
             data_dir=Path(env["DATA_DIR"]) if env.get("DATA_DIR") else DEFAULT_DATA_DIR,
             static_dir=Path(env["STATIC_DIR"]) if env.get("STATIC_DIR") else DEFAULT_STATIC_DIR,

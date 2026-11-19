@@ -97,3 +97,47 @@ def test_without_an_api_key_it_fails_cleanly_and_makes_no_network_call():
     with pytest.raises(LLMUnavailable):
         llm.complete("hi")
     assert wire.requests == []
+
+
+# --- a secondary key backs up the primary ---
+
+def rate_limited() -> httpx.Response:
+    return httpx.Response(429, json={"error": {"message": "free-models-per-day"}})
+
+
+def two_key_gateway(wire: Wire, models=("m/one:free", "m/two:free")):
+    return OpenRouterLLM(api_key="key-A", fallback_api_key="key-B", models=list(models),
+                         transport=httpx.MockTransport(wire), sleep=lambda _s: None)
+
+
+def keys_used(wire: Wire):
+    return [r.headers["Authorization"].removeprefix("Bearer ") for r in wire.requests]
+
+
+def test_falls_back_to_the_second_key_when_every_model_fails_on_the_first():
+    wire = Wire(rate_limited(), rate_limited(), ok("from B"))
+    assert two_key_gateway(wire).complete("q") == "from B"
+    assert keys_used(wire) == ["key-A", "key-A", "key-B"]
+
+
+def test_the_primary_key_is_always_tried_first_again_on_the_next_question():
+    wire = Wire(rate_limited(), rate_limited(), ok("from B"), ok("A recovered"))
+    llm = two_key_gateway(wire)
+    llm.complete("q1")
+    assert llm.complete("q2") == "A recovered"
+    assert keys_used(wire)[3] == "key-A"
+
+
+def test_raises_when_both_keys_are_exhausted():
+    wire = Wire(*[rate_limited() for _ in range(4)])
+    with pytest.raises(LLMUnavailable):
+        two_key_gateway(wire).complete("q")
+    assert keys_used(wire) == ["key-A", "key-A", "key-B", "key-B"]
+
+
+def test_works_with_only_the_fallback_key_configured():
+    wire = Wire(ok("only B"))
+    llm = OpenRouterLLM(api_key="", fallback_api_key="key-B", models=["m/one:free"],
+                        transport=httpx.MockTransport(wire), sleep=lambda _s: None)
+    assert llm.complete("q") == "only B"
+    assert keys_used(wire) == ["key-B"]
