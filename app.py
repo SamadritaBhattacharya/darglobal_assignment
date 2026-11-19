@@ -13,5 +13,14 @@ import uvicorn  # noqa: E402
 
 from dar.main import create_app_from_env  # noqa: E402
 
+try:  # ZeroGPU hardware refuses to start a Space without a @spaces.GPU function; this one is never called.
+    import spaces
+
+    @spaces.GPU
+    def _zero_gpu_marker() -> None:
+        return None
+except ImportError:  # not on Hugging Face
+    pass
+
 if __name__ == "__main__":
     uvicorn.run(create_app_from_env(), host="0.0.0.0", port=int(os.environ.get("PORT", "7860")))
