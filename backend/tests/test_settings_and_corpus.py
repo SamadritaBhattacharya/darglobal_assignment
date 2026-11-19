@@ -44,3 +44,8 @@ def test_reads_a_secondary_key_and_never_reprs_it():
     assert s.openrouter_fallback_api_key == "super-secret-2"
     assert "super-secret-2" not in repr(s)
     assert Settings.from_env({}).openrouter_fallback_api_key == ""
+
+
+def test_reads_cors_origins_as_a_list():
+    assert Settings.from_env({"CORS_ORIGINS": " https://a.app , https://b.app "}).cors_origins == ["https://a.app", "https://b.app"]
+    assert Settings.from_env({}).cors_origins == []

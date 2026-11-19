@@ -105,6 +105,19 @@ describe("Chat source cards", () => {
   });
 });
 
+describe("Chat backend URL", () => {
+  it("posts to NEXT_PUBLIC_API_URL when it is set", async () => {
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
+    const fetchMock = vi.fn().mockResolvedValue(answer("hi"));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Chat />);
+    await ask("Tell me about Neptune");
+    await screen.findByText("hi");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://api.example.com/api/chat");
+    vi.unstubAllEnvs();
+  });
+});
+
 describe("Chat conversation", () => {
   it("sends the earlier turns with a follow-up question", async () => {
     const fetchMock = vi.fn().mockImplementationOnce(async () => answer("First answer")).mockImplementationOnce(async () => answer("Second answer"));

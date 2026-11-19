@@ -14,6 +14,7 @@ if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
 from fastapi import FastAPI  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
 from dar.adapters.catalog import InMemoryCatalog  # noqa: E402
@@ -41,6 +42,7 @@ def create_app(
     clock: Callable[[], float] = time.monotonic,
     static_dir: Path | None = None,
     index_dir: Path | None = None,
+    cors_origins: list[str] | None = None,
 ) -> FastAPI:
     chunks = load_corpus(corpus_path)
     retriever = HybridRetriever(chunks, index_dir=index_dir)
@@ -52,6 +54,8 @@ def create_app(
         return answer_question(request, retriever, llm, listings, catalog)
 
     app = FastAPI(title="DarGlobal & Wasalt assistant")
+    if cors_origins:
+        app.add_middleware(CORSMiddleware, allow_origins=cors_origins, allow_methods=["POST", "GET"], allow_headers=["*"])
     app.include_router(build_router(answer, data_as_of, SlidingWindowLimiter(rate_limit_per_minute, clock)))
     if static_dir is not None and Path(static_dir).is_dir():
         # mounted last so every /api route above takes precedence
@@ -88,6 +92,7 @@ def create_app_from_env() -> FastAPI:
         ),
         static_dir=settings.static_dir,
         index_dir=settings.index_dir,
+        cors_origins=settings.cors_origins,
     )
 
 

@@ -70,7 +70,7 @@ export default function Chat() {
     setQuestion("");
     setMessages((all) => [...all, { role: "user", content: message }, { role: "assistant", content: "" }]);
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, history }),
