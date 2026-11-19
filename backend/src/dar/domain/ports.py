@@ -7,7 +7,15 @@ from dar.domain.models import Chunk
 
 
 class LLMUnavailable(Exception):
-    """Raised when no model in the chain could answer."""
+    """Raised when no model in the chain could answer.
+
+    reason says why, so the visitor can be told: "rate_limited" (free daily limit reached), "timeout",
+    "not_configured" (no usable API key) or "unavailable" (anything else, e.g. a provider outage).
+    """
+
+    def __init__(self, message: str = "", reason: str = "unavailable") -> None:
+        super().__init__(message)
+        self.reason = reason
 
 
 class Retriever(Protocol):

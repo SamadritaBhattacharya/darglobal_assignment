@@ -90,6 +90,22 @@ def test_when_every_model_fails_the_visitor_still_gets_the_best_passages_not_a_d
     assert sources and sources[0]["url"] == "https://example.test/alpha"   # with its source link
 
 
+@pytest.mark.parametrize("reason, expected", [
+    ("rate_limited", "daily limit"),
+    ("timeout", "taking too long"),
+    ("not_configured", "isn't available"),
+    ("unavailable", "trouble reaching"),
+])
+def test_the_fallback_says_why_the_full_answer_is_not_available(reason, expected):
+    client = TestClient(create_app(corpus_path=CORPUS, llm=ScriptedLLM(fail=True, fail_reason=reason)))
+    response = client.post("/api/chat", json={"message": "Tell me about Alpha Residences", "history": []})
+    events = [json.loads(l[6:]) for l in response.text.splitlines() if l.startswith("data: ")]
+    text = "".join(e["text"] for e in events if e["type"] == "token")
+    assert expected in text.lower()
+    assert "fictional beachfront development" in text   # the passages are still shown
+    assert events[-1] == {"type": "done", "verdict": "partial", "reason": reason}
+
+
 def test_when_every_model_fails_and_nothing_relevant_was_found_it_is_a_plain_dont_know():
     client = TestClient(create_app(corpus_path=CORPUS, llm=ScriptedLLM(fail=True)))
     verdict, _ = ask(client, "zzzz qqqq xylophone")

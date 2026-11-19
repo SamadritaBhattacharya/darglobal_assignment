@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { readEvents, SourceRef } from "../lib/chatStream";
+import { describeFailure } from "../lib/errors";
 import { readJson, remove, writeJson } from "../lib/storage";
 import SourceCard from "./SourceCard";
 import StatusLine from "./StatusLine";
@@ -11,6 +12,9 @@ import { AlertIcon, ArrowUpIcon, Badge, Button, InfoIcon, Spinner, TrashIcon } f
 type Message = { role: "user" | "assistant"; content: string; sources?: SourceRef[]; verdict?: string };
 
 const STORAGE_KEY = "dar-chat-v1";
+const PROFILE_KEY = "dar-profile-v1"; // the visitor's name: kept only in their own browser
+/** Same rule the server applies: letters, spaces, hyphens, apostrophes; nothing that could carry markup. */
+const SAFE_NAME = /^[A-Za-z][A-Za-z'’ -]{1,39}$/;
 const HISTORY_TURNS = 6; // what we send with each question; the server trims further by budget
 
 const SUGGESTIONS = [
@@ -32,6 +36,7 @@ export default function Chat() {
   const [step, setStep] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [name, setName] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +44,8 @@ export default function Chat() {
     // render would cause a server/client mismatch.
     /* eslint-disable react-hooks/set-state-in-effect */
     setMessages(readJson<Message[]>(STORAGE_KEY, []));
+    const saved = readJson<{ name?: string }>(PROFILE_KEY, {}).name;
+    setName(saved && SAFE_NAME.test(saved) ? saved : null);
     setLoaded(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -70,25 +77,28 @@ export default function Chat() {
     setError(null);
     setQuestion("");
     setMessages((all) => [...all, { role: "user", content: message }, { role: "assistant", content: "" }]);
+    let received = false; // has any of the answer arrived yet? (tells "never connected" from "dropped halfway")
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history }),
+        body: JSON.stringify({ message, history, ...(name ? { profile: { name } } : {}) }),
       });
-      if (response.status === 429) {
-        const body = await response.json().catch(() => null);
-        throw new Error(body?.detail ?? "You're asking quickly. Please wait a moment and try again.");
-      }
       for await (const item of readEvents(response)) {
         if (item.type === "step") setStep(item.text);
-        if (item.type === "token") updateLast((m) => ({ ...m, content: m.content + item.text }));
+        if (item.type === "token") {
+          received = true;
+          updateLast((m) => ({ ...m, content: m.content + item.text }));
+        }
         if (item.type === "sources") updateLast((m) => ({ ...m, sources: item.sources }));
         if (item.type === "done") updateLast((m) => ({ ...m, verdict: item.verdict }));
+        if (item.type === "memory" && SAFE_NAME.test(item.name)) {
+          setName(item.name);
+          writeJson(PROFILE_KEY, { name: item.name });
+        }
       }
     } catch (failure) {
-      const known = failure instanceof Error && failure.message.startsWith("You're asking");
-      setError(known ? (failure as Error).message : "Sorry, something went wrong. Please try again.");
+      setError(describeFailure(failure, { online: navigator.onLine !== false, partial: received }));
       setMessages((all) => all.filter((m, i) => !(i === all.length - 1 && m.role === "assistant" && !m.content)));
     } finally {
       setStep(null);
@@ -99,6 +109,8 @@ export default function Chat() {
   function clearChat() {
     setMessages([]);
     setError(null);
+    setName(null); // "Clear chat" also makes the page forget the name
+    remove(PROFILE_KEY);
   }
 
   const last = messages[messages.length - 1];

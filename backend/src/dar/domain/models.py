@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
 from dar.domain.pii import redact
 
@@ -58,9 +58,16 @@ class Turn(BaseModel):
     sources: list[TurnSource] = Field(default_factory=list, max_length=10)
 
 
+class Profile(BaseModel):
+    """What the visitor's own browser remembers about them (never stored on the server, never sent to the model)."""
+
+    name: str = Field(default="", max_length=40)
+
+
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=500)
     history: list[Turn] = Field(default_factory=list, max_length=100)
+    profile: Profile | None = None
 
 
 Verdict = Literal["answered", "partial", "dont_know", "refused", "error"]
@@ -89,9 +96,24 @@ class SourcesEvent(BaseModel):
     sources: list[SourceRef]
 
 
+class MemoryEvent(BaseModel):
+    """Tells the page a name to keep in the visitor's own browser."""
+
+    type: Literal["memory"] = "memory"
+    name: str
+
+
 class DoneEvent(BaseModel):
     type: Literal["done"] = "done"
     verdict: Verdict
+    reason: str | None = None  # why a full answer was not possible, e.g. "rate_limited" (only sent when there is one)
+
+    @model_serializer(mode="wrap")
+    def _omit_empty_reason(self, handler):
+        data = handler(self)
+        if data.get("reason") is None:
+            data.pop("reason", None)
+        return data
 
 
-Event = StepEvent | TokenEvent | SourcesEvent | DoneEvent
+Event = StepEvent | TokenEvent | SourcesEvent | MemoryEvent | DoneEvent

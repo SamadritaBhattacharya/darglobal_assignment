@@ -8,6 +8,7 @@ from dar.domain.models import (
     ChatRequest,
     DoneEvent,
     Event,
+    MemoryEvent,
     SourceRef,
     SourcesEvent,
     StepEvent,
@@ -18,10 +19,12 @@ from dar.app.ranking import (
     render_closest, render_count, render_details, render_listings, render_no_match, render_passages,
     render_pick_help, render_which_one,
 )
-from dar.domain.guardrails import check
+from dar.domain.conversation import CAN_HELP, INTERNALS_REFUSAL, respond as converse
+from dar.domain.guardrails import check, looks_like_injection
 from dar.domain.listing_query import parse_listing_query
+from dar.domain.names import extract_name, valid_name
+from dar.domain.output_guard import leaks_internals
 from dar.domain.pii import redact
-from dar.domain.smalltalk import reply as smalltalk
 from dar.domain.ports import LLM, Catalog, LLMUnavailable, Listings, Retriever
 from dar.domain.references import pick_reference
 from dar.domain.verifier import verify
@@ -128,6 +131,10 @@ def _tokens(text: str) -> Iterator[Event]:
         yield TokenEvent(text=piece)
 
 
+def _without_name(text: str, name: str | None) -> str:
+    return re.sub(re.escape(name), "the visitor", text, flags=re.IGNORECASE) if name else text
+
+
 def _last_shown(request: ChatRequest):
     """The results the most recent assistant answer showed, in order."""
     for turn in reversed(request.history):
@@ -168,11 +175,16 @@ def answer_question(
         yield DoneEvent(verdict="refused")
         return
 
-    chat = smalltalk(request.message)
-    if chat:
-        yield from _tokens(chat)
+    name = valid_name(request.profile.name) if request.profile else None
+    learned = extract_name(request.message)
+    if learned:
+        yield MemoryEvent(name=learned)  # the page keeps it in the visitor's own browser
+
+    conversation = converse(request.message, name)
+    if conversation:
+        yield from _tokens(conversation.text)
         yield SourcesEvent(sources=[])
-        yield DoneEvent(verdict="answered")
+        yield DoneEvent(verdict=conversation.verdict)
         return
 
     picked = _pick_a_result(request, catalog)
@@ -180,8 +192,10 @@ def answer_question(
         yield from picked
         return
 
-    question = redact(request.message).text
-    turns = _trim_history(request)
+    # The visitor's name is only ever used in our own templated replies, so it is scrubbed before any model call.
+    known = learned or name
+    question = _without_name(redact(request.message).text, known)
+    turns = [(role, _without_name(content, known)) for role, content in _trim_history(request)]
     history = [f"{role}: {content}" for role, content in turns]
 
     structured = parse_listing_query(question, listings.cities(), listings.types(), listings.districts())
@@ -212,6 +226,8 @@ def answer_question(
 
     yield StepEvent(text="Searching DarGlobal and Wasalt data…")
     chunks = _retrieve(retriever, _retrieval_queries(question, turns))
+    # Page text is data. A passage that reads like an instruction to an AI is dropped, never shown to the model.
+    chunks = [c for c in chunks if not looks_like_injection(c.text)]
 
     if not chunks:
         yield from _tokens(DONT_KNOW)
@@ -222,12 +238,19 @@ def answer_question(
     evidence = [f"{c.title} | {c.section}: {c.text}" for c in chunks]
     try:
         reply = llm.complete(_prompt(question, history, evidence))
-    except LLMUnavailable:
-        # Free-tier quota out, or an outage: still give the visitor the best passages we found, with sources.
+    except LLMUnavailable as failure:
+        # Free-tier quota out, a timeout or an outage: still give the visitor the best passages we found, with
+        # sources, and tell them plainly why there is no full answer.
         shown = chunks[:3]
-        yield from _tokens(render_passages(shown))
+        yield from _tokens(render_passages(shown, reason=failure.reason))
         yield SourcesEvent(sources=[source_ref(i, c) for i, c in enumerate(shown, start=1)])
-        yield DoneEvent(verdict="partial")
+        yield DoneEvent(verdict="partial", reason=failure.reason)
+        return
+
+    if leaks_internals(reply):  # never show a reply that reveals keys, the build, or the instructions
+        yield from _tokens(f"{INTERNALS_REFUSAL} {CAN_HELP}")
+        yield SourcesEvent(sources=[])
+        yield DoneEvent(verdict="refused")
         return
 
     checked = verify(reply, evidence, question)

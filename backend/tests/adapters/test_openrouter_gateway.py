@@ -99,6 +99,38 @@ def test_without_an_api_key_it_fails_cleanly_and_makes_no_network_call():
     assert wire.requests == []
 
 
+# --- typed reasons: WHY nothing could answer, so the visitor can be told ---
+
+def reason_of(wire: Wire, **kw) -> str:
+    with pytest.raises(LLMUnavailable) as caught:
+        gateway(wire, **kw).complete("hi")
+    return caught.value.reason
+
+
+def test_a_daily_limit_on_every_model_is_reported_as_rate_limited():
+    assert reason_of(Wire(*[httpx.Response(429, json={"error": {"message": "free-models-per-day"}})] * 3)) == "rate_limited"
+
+
+def test_timeouts_everywhere_are_reported_as_a_timeout():
+    wire = Wire(*[httpx.ReadTimeout("slow")] * 6)
+    assert reason_of(wire) == "timeout"
+
+
+def test_server_errors_are_reported_as_unavailable():
+    assert reason_of(Wire(*[httpx.Response(503)] * 6)) == "unavailable"
+
+
+def test_a_mix_that_includes_a_rate_limit_is_reported_as_rate_limited():
+    assert reason_of(Wire(httpx.ReadTimeout("slow"), httpx.ReadTimeout("slow"), httpx.Response(429), httpx.Response(429))) == "rate_limited"
+
+
+def test_no_key_at_all_is_reported_as_not_configured():
+    llm = OpenRouterLLM(api_key="", models=["m/one:free"], transport=httpx.MockTransport(Wire()), sleep=lambda _s: None)
+    with pytest.raises(LLMUnavailable) as caught:
+        llm.complete("hi")
+    assert caught.value.reason == "not_configured"
+
+
 # --- a secondary key backs up the primary ---
 
 def rate_limited() -> httpx.Response:

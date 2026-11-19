@@ -19,8 +19,19 @@ _INJECTION = re.compile(
     r"disregard (your|the|all|any)|"
     r"(reveal|show|print|repeat|output|tell me|give me) (me )?(your|the) (hidden |secret )?(system )?(prompt|instructions|rules)|"
     r"(text|instructions|everything) above|hidden instructions|"
-    r"\byou are now\b|\bDAN\b|jailbreak|developer mode|without (any )?restrictions",
-    re.IGNORECASE,
+    r"\byou are now\b|\bDAN\b|jailbreak|developer mode|without (any )?restrictions|"
+    r"pretend (?:to be|you are|you're|that you)|"
+    r"\bfrom now on\b.{0,40}\b(?:you|answer|respond|ignore)\b|"
+    r"act as (?:my|a|an|the)\s+(?:developer|admin|administrator|root|unrestricted|unfiltered|jailbroken|dan)\b|"
+    r"forget (?:everything|all|your|what)\b.{0,30}\b(?:told|instructions|rules|said|above|before)\b|"
+    r"</?system>|^\s*system\s*:|\[system\]|###\s*(?:instruction|system)|"
+    r"bypass (?:your|the|all)?\s*(?:filters?|rules|guardrails|restrictions|safety)|"
+    r"(?:repeat|print|output|say|recite|reproduce)\s+(?:the\s+)?(?:words|text|everything|all)\s+(?:above|before)|"
+    r"(?:original|initial|first|hidden|secret|real)\s+(?:instructions|prompt|rules)|"
+    r"translate\s+(?:your|the)\s+(?:instructions|prompt|rules|system)|"
+    r"(?:i am|i'm)\s+your\s+(?:developer|creator|admin|owner|programmer)|\bdebug mode\b|\badmin mode\b|\bgod mode\b|\bsudo\b|"
+    r"override\s+(?:your|the)\s+(?:rules|instructions|safety)",
+    re.IGNORECASE | re.MULTILINE,
 )
 _ADVICE = re.compile(
     r"\bshould i (invest|buy|put|sell|purchase)|"
@@ -36,8 +47,9 @@ _NON_LATIN = re.compile(r"[Ѐ-ӿ֐-ۿݐ-ݿऀ-ॿ぀-ヿ一-鿿가-힯]")
 
 _REPLIES = {
     "injection": (
-        "I can't help with changing or revealing how I work. I'm here to answer questions about "
-        'DarGlobal projects and Wasalt listings, for example: "Where is Neptune located?"'
+        "I can't share details about how I work, and I can't change my rules. "
+        "I can help with DarGlobal projects and a sample of Wasalt listings, "
+        'for example: "Where is Neptune located?"'
     ),
     "advice": (
         "I can't give investment, legal, tax or financial advice, and I can't predict prices. "
@@ -50,6 +62,11 @@ _REPLIES = {
         "I'll look it up in the DarGlobal and Wasalt information."
     ),
 }
+
+
+def looks_like_injection(text: str) -> bool:
+    """True if text reads like an instruction aimed at an AI (used on retrieved page text, which is data only)."""
+    return bool(_INJECTION.search(text))
 
 
 def check(message: str) -> Refusal | None:

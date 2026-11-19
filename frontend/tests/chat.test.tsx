@@ -118,6 +118,88 @@ describe("Chat backend URL", () => {
   });
 });
 
+const learnsName = (name: string) =>
+  sse([
+    { type: "memory", name },
+    { type: "token", text: `Nice to meet you, ${name}!` },
+    { type: "sources", sources: [] },
+    { type: "done", verdict: "answered" },
+  ]);
+
+describe("Chat remembers the visitor's name (in their browser only)", () => {
+  it("keeps a name the server hands over and sends it back with the next question", async () => {
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => learnsName("Samadrita"))
+      .mockImplementationOnce(async () => answer("Yes, your name is Samadrita."));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Chat />);
+    await ask("my name is Samadrita");
+    await screen.findByText(/Nice to meet you, Samadrita/);
+    await ask("do you remember my name?");
+    await screen.findByText(/your name is Samadrita/);
+
+    const second = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(second.profile).toEqual({ name: "Samadrita" });
+    const first = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(first.profile).toBeUndefined(); // nothing to send before a name is known
+  });
+
+  it("still knows the name after a page refresh", async () => {
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => learnsName("Samadrita"))
+      .mockImplementationOnce(async () => answer("ok"));
+    vi.stubGlobal("fetch", fetchMock);
+    const first = render(<Chat />);
+    await ask("I am Samadrita");
+    await screen.findByText(/Nice to meet you/);
+    first.unmount();
+
+    render(<Chat />);
+    await screen.findByText(/Nice to meet you/); // history restored
+    await ask("hello again");
+    await screen.findByText("ok");
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).profile).toEqual({ name: "Samadrita" });
+  });
+
+  it("'Clear chat' makes the page forget the name as well", async () => {
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => learnsName("Samadrita"))
+      .mockImplementationOnce(async () => answer("ok"));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Chat />);
+    await ask("my name is Samadrita");
+    await screen.findByText(/Nice to meet you/);
+    await userEvent.setup().click(screen.getByRole("button", { name: /clear chat/i }));
+    await ask("hi");
+    await screen.findByText("ok");
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).profile).toBeUndefined();
+    expect(localStorage.length).toBeLessThanOrEqual(0 + 1); // at most the new conversation, never the name
+    expect(Object.values(localStorage).join("")).not.toContain("Samadrita");
+  });
+
+  it("ignores a malformed name instead of storing it", async () => {
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => sse([{ type: "memory", name: "<script>alert(1)</script>" }, { type: "token", text: "hi" }, { type: "sources", sources: [] }, { type: "done", verdict: "answered" }]))
+      .mockImplementationOnce(async () => answer("ok"));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Chat />);
+    await ask("hello");
+    await screen.findByText("hi");
+    await ask("again");
+    await screen.findByText("ok");
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).profile).toBeUndefined();
+  });
+
+  it("works when browser storage is unavailable", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("blocked"); });
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("blocked"); });
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(async () => learnsName("Sam")));
+    render(<Chat />);
+    await ask("call me Sam");
+    expect(await screen.findByText(/Nice to meet you, Sam/)).toBeTruthy();
+  });
+});
+
 describe("Chat conversation", () => {
   it("sends the earlier turns with a follow-up question", async () => {
     const fetchMock = vi.fn().mockImplementationOnce(async () => answer("First answer")).mockImplementationOnce(async () => answer("Second answer"));
@@ -280,6 +362,88 @@ describe("Chat", () => {
 
     expect(await screen.findByText(/can't give investment advice/)).toBeTruthy();
     expect(screen.getByTestId("verdict").textContent).toMatch(/can't help with that/i);
+  });
+
+  it("says the visitor is offline when the browser has no connection", async () => {
+    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    render(<Chat />);
+    await ask("hello");
+    const text = (await screen.findByRole("alert")).textContent ?? "";
+    expect(text).toMatch(/offline/i);
+    expect(text).toMatch(/connection/i);
+    expect(text).not.toMatch(/waking up/i);
+  });
+
+  it("tells the visitor a rejected message needs rephrasing (422)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ detail: [] }), { status: 422 })));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/shorten or rephrase/i);
+  });
+
+  it("says the service cannot be reached when the address is wrong (404)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("nope", { status: 404 })));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/can't reach the assistant service/i);
+  });
+
+  it("gives a clear message for other rejected requests (400/413)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("bad", { status: 413 })));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/couldn't be processed/i);
+  });
+
+  it("blames our side, not the visitor, for a real server error (500)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("boom", { status: 500 })));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/on our side/i);
+  });
+
+  it("says the connection dropped when it breaks halfway through an answer, and keeps what arrived", async () => {
+    const encoder = new TextEncoder();
+    let pulls = 0; // like a real drop: the first bytes arrive, then the connection fails
+    const body = new ReadableStream({
+      pull(controller) {
+        if (pulls++ === 0) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "token", text: "Neptune is in Riy" })}\n\n`));
+        } else {
+          controller.error(new TypeError("network error"));
+        }
+      },
+    });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(body, { status: 200 })));
+    render(<Chat />);
+    await ask("where is neptune");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/connection dropped/i);
+    expect(screen.getByText(/Neptune is in Riy/)).toBeTruthy();
+  });
+
+  it("explains that a sleeping free server is waking up when the connection fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/waking up/i);
+    expect(screen.getByRole("alert").textContent).toMatch(/try again/i);
+  });
+
+  it.each([502, 503, 504])("treats a %i from the host as the server waking up", async (status) => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("upstream", { status })));
+    render(<Chat />);
+    await ask("hello");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/waking up/i);
+  });
+
+  it("keeps the generic message for a real server error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("boom", { status: 500 })));
+    render(<Chat />);
+    await ask("hello");
+    const text = (await screen.findByRole("alert")).textContent ?? "";
+    expect(text).toMatch(/something went wrong/i);
+    expect(text).not.toMatch(/waking up/i);
   });
 
   it("shows a friendly message when the network fails", async () => {

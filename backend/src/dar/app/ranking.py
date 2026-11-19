@@ -31,15 +31,40 @@ def render_listings(query: ListingQuery, results: list[Chunk], total: int) -> st
     return "\n".join(lines) + "\n\n" + _LIVE
 
 
-def render_passages(chunks: list[Chunk], shown: int = 3) -> str:
-    """Used when the language model is unavailable: show the best passages found instead of a dead end."""
-    lines = [
+_FALLBACK_INTRO = {
+    "rate_limited": (
+        "My AI writer has reached its free daily limit, so I can't write a full answer right now. "
+        "Here are the most relevant passages I found:"
+    ),
+    "timeout": (
+        "My AI writer is taking too long to respond, so I can't write a full answer right now. "
+        "Here are the most relevant passages I found:"
+    ),
+    "not_configured": (
+        "My AI writer isn't available in this deployment, so I can't write a full answer. "
+        "Here are the most relevant passages I found:"
+    ),
+    "unavailable": (
         "I'm having trouble reaching my language model right now, so I can't write a full answer. "
         "Here are the most relevant passages I found:"
-    ]
+    ),
+}
+_FALLBACK_OUTRO = {
+    "rate_limited": "The free limit resets daily, so please try again later for a complete answer.",
+    "timeout": "Please try again in a moment for a complete answer.",
+    "not_configured": "Please let the site owner know, or browse the linked pages directly.",
+    "unavailable": "Please try again in a moment for a complete answer.",
+}
+
+
+def render_passages(chunks: list[Chunk], shown: int = 3, reason: str = "unavailable") -> str:
+    """Used when the language model is unavailable: show the best passages found instead of a dead end,
+    and say plainly why a full answer is not available."""
+    reason = reason if reason in _FALLBACK_INTRO else "unavailable"
+    lines = [_FALLBACK_INTRO[reason]]
     for n, c in enumerate(chunks[:shown], start=1):
         lines.append(f"{n}. {c.title} ({c.section}): {card_detail(c, 260)} [{n}]")
-    lines.append("Please try again in a moment for a complete answer.")
+    lines.append(_FALLBACK_OUTRO[reason])
     return "\n\n".join(lines)
 
 
