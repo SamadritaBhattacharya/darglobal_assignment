@@ -16,9 +16,10 @@ from dar.domain.models import (
 )
 from dar.app.cards import source_ref
 from dar.app.ranking import (
-    render_closest, render_count, render_details, render_listings, render_no_match, render_passages,
-    render_pick_help, render_which_one,
+    render_closest, render_company, render_count, render_details, render_listings, render_no_match,
+    render_passages, render_pick_help, render_which_one,
 )
+from dar.domain.companies import which_company
 from dar.domain.conversation import CAN_HELP, INTERNALS_REFUSAL, respond as converse
 from dar.domain.guardrails import check, looks_like_injection
 from dar.domain.listing_query import parse_listing_query
@@ -30,6 +31,11 @@ from dar.domain.references import pick_reference
 from dar.domain.verifier import verify
 
 MAX_LISTINGS_SHOWN = 5
+# company -> (display name, site, the page of ours that describes it)
+COMPANIES = {
+    "wasalt": ("Wasalt", "wasalt.sa", "https://wasalt.sa/en"),
+    "darglobal": ("DarGlobal", "darglobal.co.uk", "https://darglobal.co.uk/about"),
+}
 
 DONT_KNOW = (
     "I couldn't find that in the DarGlobal and Wasalt information I have, so I won't guess.\n\n"
@@ -180,12 +186,23 @@ def answer_question(
     if learned:
         yield MemoryEvent(name=learned)  # the page keeps it in the visitor's own browser
 
-    conversation = converse(request.message, name)
+    earlier_questions = [turn.content for turn in request.history if turn.role == "user"]
+    conversation = converse(request.message, name, earlier_questions)
     if conversation:
         yield from _tokens(conversation.text)
         yield SourcesEvent(sources=[])
         yield DoneEvent(verdict=conversation.verdict)
         return
+
+    company = which_company(request.message)
+    if company:
+        name_, site, about_url = COMPANIES[company]
+        about = catalog.by_url(about_url)
+        if about:  # the company's own description, straight from its own page: no search, no model
+            yield from _tokens(render_company(name_, site, about))
+            yield SourcesEvent(sources=[source_ref(1, about[0])])
+            yield DoneEvent(verdict="answered")
+            return
 
     picked = _pick_a_result(request, catalog)
     if picked is not None:

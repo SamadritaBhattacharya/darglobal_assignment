@@ -111,6 +111,13 @@ def render_details(chunks: list[Chunk]) -> str:
     return "\n\n".join(parts) + f"\n\n{_OPEN_PAGE} on darglobal.co.uk."
 
 
+def render_company(name: str, site: str, chunks: list[Chunk]) -> str:
+    """'What is X?': the company's own description from its own pages, then a pointer to the site."""
+    parts = [f"Here's what {name} says about itself:"]
+    parts += [card_detail(c, 420) for c in chunks[:2] if card_detail(c, 420)]
+    return "\n\n".join(parts) + f"\n\n{_OPEN_PAGE} and visit {site}."
+
+
 def render_pick_help(shown: int) -> str:
     if shown == 0:
         return ("I don't have a list of results to pick from yet. Ask me something first, for example "

@@ -15,7 +15,10 @@ const STORAGE_KEY = "dar-chat-v1";
 const PROFILE_KEY = "dar-profile-v1"; // the visitor's name: kept only in their own browser
 /** Same rule the server applies: letters, spaces, hyphens, apostrophes; nothing that could carry markup. */
 const SAFE_NAME = /^[A-Za-z][A-Za-z'’ -]{1,39}$/;
-const HISTORY_TURNS = 6; // what we send with each question; the server trims further by budget
+// What we send with each question. The server uses the last few turns to understand follow-ups and trims them for
+// the language model; the rest lets the assistant recall the conversation ("what did I ask first?").
+const HISTORY_TURNS = 20;
+const SENT_CHARS = 1000; // long earlier answers are shortened so the request stays small
 
 const SUGGESTIONS = [
   "Show me villas for rent in Riyadh",
@@ -69,7 +72,7 @@ export default function Chat() {
     if (!message || busy) return;
     const history = messages.slice(-HISTORY_TURNS).map(({ role, content, sources }) => ({
       role,
-      content,
+      content: content.slice(0, SENT_CHARS),
       // just enough to find each shown result again ("the 1st one"): not the photo or the detail text
       ...(sources && sources.length > 0 ? { sources: sources.map(({ n, title, url }) => ({ n, title, url })) } : {}),
     }));

@@ -101,6 +101,33 @@ def test_a_name_the_visitor_shares_is_greeted_and_handed_to_the_page_to_keep(set
     assert len(llm.received_prompts) == before
 
 
+@pytest.mark.parametrize("message", [
+    "hi i am samadrita. who are you?",       # the real message that failed
+    "hi, I'm Samadrita", "hello my name is samadrita", "hey i am samadrita", "good morning i am Samadrita",
+    "Hello there, I am Samadrita!", "hi this is Samadrita", "hiya i'm samadrita",
+])
+def test_a_greeting_and_an_introduction_in_one_message_are_both_understood(setup, message):
+    client, llm = setup
+    before = len(llm.received_prompts)
+    verdict, text, events = chat(client, message)
+    # the reply greets back in kind ("Good morning, ..." answers "good morning ...")
+    assert verdict == "answered" and "Samadrita" in text and text.lower().startswith(("hello", "hi", "nice", "good", "wa alaikum"))
+    assert remembered(events) == ["Samadrita"]
+    assert "couldn't find" not in text.lower()
+    assert len(llm.received_prompts) == before
+
+
+def test_the_full_failing_message_also_says_who_the_assistant_is(setup):
+    _, text, _ = chat(setup[0], "hi i am samadrita. who are you?")
+    assert "assistant" in text.lower() and "Hello, Samadrita" in text
+
+
+@pytest.mark.parametrize("message", ["hi i am looking for a villa", "hello i am interested in Neptune", "hi i am happy",
+                                     "hey I am from Dubai", "hi i am hungry"])
+def test_a_greeting_followed_by_an_ordinary_i_am_sentence_is_not_a_name(setup, message):
+    assert remembered(chat(setup[0], message)[2]) == []
+
+
 @pytest.mark.parametrize("message", ["I am looking for a villa in Riyadh", "I am interested in Neptune", "I'm from Dubai",
                                      "I am Interested", "I am happy"])
 def test_ordinary_sentences_starting_with_i_am_are_not_names(setup, message):

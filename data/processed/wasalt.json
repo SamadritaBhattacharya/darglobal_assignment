@@ -315,6 +315,16 @@
     "image_url": "https://imagedelivery.net/1DNKFJPRaeUdy_j8F7HT3w/production/properties/5858917/images/f414c338-3238-47e4-a3bc-e1e12dcb0c62.jpg/quality=60,format=auto"
   },
   {
+    "id": "wasalt:about",
+    "source": "wasalt",
+    "url": "https://wasalt.sa/en",
+    "title": "About Wasalt",
+    "section": "Overview",
+    "text": "Wasalt | About Wasalt | Overview\nFind properties For Sale and Rent in Saudi Arabia, Wasalt the Saudi's largest selection of properties. Installment Payment Plans available\nSource: Wasalt.sa",
+    "scraped_at": "2026-11-19T10:57:59Z",
+    "image_url": "https://cdn.wasalt.sa/images/wasalt-logo.svg"
+  },
+  {
     "id": "wasalt:5918928",
     "source": "wasalt",
     "url": "https://wasalt.sa/en/property/rent/rest-house-200-sqm-with-3-bedrooms-5918928",

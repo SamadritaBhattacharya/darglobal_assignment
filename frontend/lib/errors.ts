@@ -1,7 +1,9 @@
 import { ChatHttpError } from "./chatStream";
 
+// A browser reports a blocked (CORS) request exactly like a dead connection, so this cannot claim certainty.
 const WAKING =
-  "The assistant is waking up after being idle (the free server sleeps). Please try again in about a minute.";
+  "The assistant may be waking up after being idle (the free server sleeps). Please try again in about a minute. " +
+  "If it keeps happening, the connection to the assistant may be blocked or misconfigured.";
 const RATE_LIMITED = "You're asking quickly. Please wait a moment and try again.";
 
 /**

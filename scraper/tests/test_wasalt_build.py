@@ -46,6 +46,17 @@ def test_txt_export_is_readable_with_url_and_attribution(tmp_path):
     assert "Source: Wasalt.sa" in text and "Scraped: 2026-11-19" in text
 
 
+def test_the_homepage_adds_an_about_record_without_counting_as_a_listing(tmp_path):
+    from scraper.tests.test_wasalt_home import home
+
+    pages = make(tmp_path)
+    (pages / "Homepage.html").write_text(home(), encoding="utf-8")   # replaces the empty stand-in
+    result = build_dataset(pages, tmp_path / "w.json", tmp_path / "w.txt", "2026-11-19T10:00:00Z")
+    records = json.loads((tmp_path / "w.json").read_text(encoding="utf-8"))
+    assert result.listings == 2 and result.about == 1 and result.skipped == []
+    assert "wasalt:about" in {r["id"] for r in records} and len(records) == 3
+
+
 def test_the_same_listing_saved_twice_appears_once(tmp_path):
     pages = make(tmp_path)
     (pages / "Apartment one (copy).html").write_text(page(), encoding="utf-8")

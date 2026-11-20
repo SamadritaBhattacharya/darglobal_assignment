@@ -10,6 +10,7 @@ import pathlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
+from scraper.wasalt.home import parse_home
 from scraper.wasalt.parse import parse_listing
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -19,6 +20,7 @@ PAGES = ROOT / "data" / "raw" / "wasalt" / "pages"
 @dataclass
 class BuildResult:
     listings: int = 0
+    about: int = 0  # the homepage description ("what is Wasalt?"), which is not a listing
     skipped: list[str] = field(default_factory=list)
 
 
@@ -26,12 +28,14 @@ def build_dataset(pages_dir: pathlib.Path, processed: pathlib.Path, export: path
     result = BuildResult()
     records = {}
     for page in sorted(pathlib.Path(pages_dir).glob("*.htm*")):
-        chunk = parse_listing(page.read_text(encoding="utf-8", errors="replace"), scraped_at)
+        page_html = page.read_text(encoding="utf-8", errors="replace")
+        chunk = parse_listing(page_html, scraped_at) or parse_home(page_html, scraped_at)
         if chunk is None:
-            result.skipped.append(page.name)  # not a listing (e.g. the homepage) or no usable price
+            result.skipped.append(page.name)  # not a listing or the homepage (e.g. search results), or no usable price
         else:
-            records.setdefault(chunk.id, chunk)  # the same listing saved twice counts once
-    result.listings = len(records)
+            records.setdefault(chunk.id, chunk)  # the same page saved twice counts once
+    result.listings = sum(1 for c in records.values() if c.price is not None)
+    result.about = sum(1 for c in records.values() if c.id == "wasalt:about")
 
     processed.parent.mkdir(parents=True, exist_ok=True)
     export.parent.mkdir(parents=True, exist_ok=True)
@@ -49,7 +53,7 @@ def main() -> int:
     stamp = max((f.stat().st_mtime for f in files), default=datetime.now(timezone.utc).timestamp())
     scraped_at = datetime.fromtimestamp(stamp, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     result = build_dataset(PAGES, ROOT / "data" / "processed" / "wasalt.json", ROOT / "data" / "export" / "wasalt.txt", scraped_at)
-    print(f"{result.listings} listings built; {len(result.skipped)} pages skipped (not listings): {result.skipped}")
+    print(f"{result.listings} listings + {result.about} about record built; {len(result.skipped)} pages skipped: {result.skipped}")
     return 0
 
 

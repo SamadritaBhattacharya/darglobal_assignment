@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import re
 
+from dar.domain.greetings import strip_greeting
 from dar.domain.guardrails import check as _looks_hostile
 
 _TOKEN = re.compile(r"[A-Za-z][A-Za-z'’\-]{1,24}")
@@ -16,7 +17,13 @@ _NOT_NAMES = _BLOCKED | {
     "interested", "looking", "from", "here", "happy", "fine", "good", "great", "sure", "new", "not", "just", "also",
     "planning", "going", "trying", "wondering", "curious", "ok", "okay", "sorry", "glad", "excited", "student",
     "buyer", "investor", "agent", "ready", "back", "thinking", "hoping", "searching", "wanting", "needing",
+    "hungry", "tired", "thirsty", "busy", "bored", "lost", "confused", "late", "early", "online", "offline", "sick",
+    "ill", "angry", "sad", "lonely", "afraid", "scared", "nervous", "worried", "stuck", "rich", "poor", "single",
+    "married", "retired", "unemployed", "teacher", "engineer", "doctor", "developer", "owner", "tenant", "landlord",
+    "broker", "visitor", "customer", "client", "guest", "here", "there", "well", "alright", "free", "available",
+    "interested", "looking", "wondering", "happy", "excited", "glad", "sorry", "sure", "new",
 }
+_LOWERCASE_IMPLICIT = re.compile(r"^(?i:i\s+am|i'?m|im|this\s+is)\s+([A-Za-z][A-Za-z'’\-]{1,24})$")
 _STOP_AFTER_NAME = {"and", "but", "from", "i", "im", "i'm", "is", "can", "could", "please", "what", "who", "how",
                     "where", "when", "why", "do", "does", "are", "am", "the", "a", "an", "so", "then", "thanks", "thank"}
 _EXPLICIT = re.compile(
@@ -63,4 +70,13 @@ def extract_name(message: str) -> str | None:
             name = valid_name(implicit.group(1))
             if name:
                 return name
+        # "hi i am samadrita": straight after a greeting a lowercase name is clear enough, unless it is an ordinary word
+        greeted, rest = strip_greeting(sentence)
+        relaxed = _LOWERCASE_IMPLICIT.match(rest) if greeted and rest else None
+        if relaxed:
+            token = relaxed.group(1)
+            if token.lower() not in _NOT_NAMES and not token.lower().endswith(("ing", "ed")):
+                name = valid_name(token)
+                if name:
+                    return name
     return None

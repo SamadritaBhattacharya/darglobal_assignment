@@ -2,7 +2,7 @@
  * Ticket 01 - the browser UI edge. Only the network (fetch to /api/chat) is faked;
  * the component renders and behaves for real. We assert what a visitor sees.
  */
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Chat from "../components/Chat";
@@ -241,18 +241,35 @@ describe("Chat conversation", () => {
     });
   });
 
-  it("keeps only the last six turns in what it sends", async () => {
+  it("remembers a long conversation: sends the last twenty turns", async () => {
     const fetchMock = vi.fn().mockImplementation(async () => answer("ok"));
     vi.stubGlobal("fetch", fetchMock);
     render(<Chat />);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 12; i++) {
       await ask(`question ${i}`);
+      await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(i + 1));
       await screen.findAllByText("ok");
     }
     await ask("final");
-    const body = JSON.parse(fetchMock.mock.calls[5][1].body);
-    expect(body.history).toHaveLength(6);
+    const body = JSON.parse(fetchMock.mock.calls[12][1].body);
+    expect(body.history).toHaveLength(20);
     expect(body.history[0].content).toBe("question 2");
+  }, 30000);
+
+  it("shortens very long earlier answers in what it sends, so the request stays small", async () => {
+    const long = "x".repeat(3000);
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => answer(long))
+      .mockImplementationOnce(async () => answer("ok"));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Chat />);
+    await ask("first");
+    await screen.findByText(long);
+    await ask("second");
+    await screen.findByText("ok");
+    const sent = JSON.parse(fetchMock.mock.calls[1][1].body).history;
+    expect(sent[1].content.length).toBeLessThanOrEqual(1000);
+    expect(sent[0].content).toBe("first");
   });
 
   it("restores the conversation after a page refresh", async () => {
@@ -428,6 +445,17 @@ describe("Chat", () => {
     await ask("hello");
     expect((await screen.findByRole("alert")).textContent).toMatch(/waking up/i);
     expect(screen.getByRole("alert").textContent).toMatch(/try again/i);
+  });
+
+  it("does not claim the server is merely asleep: it also says what to check if it keeps happening", async () => {
+    // a browser reports a CORS block exactly like a dead connection, so the message must not rule it out
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    render(<Chat />);
+    await ask("hello");
+    const text = (await screen.findByRole("alert")).textContent ?? "";
+    expect(text).toMatch(/may be waking up/i);
+    expect(text).toMatch(/if it keeps happening/i);
+    expect(text).toMatch(/blocked or misconfigured/i);
   });
 
   it.each([502, 503, 504])("treats a %i from the host as the server waking up", async (status) => {

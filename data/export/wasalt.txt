@@ -151,6 +151,15 @@ Apartment for rent in Al Thoqbah, Khobar. 2 bedrooms, 246 sqm, 1,800 SAR per yea
 Source: Wasalt.sa
 
 
+=== About Wasalt | Overview
+URL: https://wasalt.sa/en
+Scraped: 2026-11-19
+
+Wasalt | About Wasalt | Overview
+Find properties For Sale and Rent in Saudi Arabia, Wasalt the Saudi's largest selection of properties. Installment Payment Plans available
+Source: Wasalt.sa
+
+
 === Rest House 200 SQM with 3 Bedrooms | Listing
 URL: https://wasalt.sa/en/property/rent/rest-house-200-sqm-with-3-bedrooms-5918928
 Scraped: 2026-11-19
